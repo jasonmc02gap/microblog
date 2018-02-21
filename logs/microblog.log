@@ -100,3 +100,5 @@ jinja2.exceptions.UndefinedError: 'wtf' is undefined
 2018-02-14 15:48:44,100 INFO: Microblog startup [in /Users/jason/progra/microblog/app/__init__.py:50]
 2018-02-14 15:51:32,204 INFO: Microblog startup [in /Users/jason/progra/microblog/app/__init__.py:50]
 2018-02-15 09:55:33,486 INFO: Microblog startup [in /Users/jason/progra/microblog/app/__init__.py:50]
+2018-02-21 10:15:44,786 INFO: Microblog startup [in /Users/jason/progra/microblog/app/__init__.py:52]
+2018-02-21 10:15:51,174 INFO: Microblog startup [in /Users/jason/progra/microblog/app/__init__.py:52]
