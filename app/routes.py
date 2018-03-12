@@ -1,7 +1,10 @@
 from flask import render_template, flash, redirect, url_for, request
+from flask import jsonify
 from flask_login import current_user, login_user, login_required, logout_user
+from flask_babel import _
 from werkzeug.urls import url_parse
 from datetime import datetime
+from guess_language import guess_language
 from app import app
 from app import db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm
@@ -19,11 +22,16 @@ def before_request():
 @login_required
 def index():
     form = PostForm()
+    form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        language = guess_language(form.post.data)
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = 'en'
+        print("=====> entra " + language)
+        post = Post(body=form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
-        flash('Your post is now live!')
+        flash(_('Your post is now live!'))
         return redirect(url_for('index'))
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(page, app.config['POSTS_PER_PAGE'], False)
@@ -103,7 +111,7 @@ def edit_profile():
 def follow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash('User {} not found.'.format(username))
+        flash(_('User %(username)s not found.', username=username))
         return redirect(url_for('index'))
     if user == current_user:
         flash('You cannot follow yourself!')
@@ -118,7 +126,7 @@ def follow(username):
 def unfollow(username):
     user = User.query.filter_by(username=username).first()
     if user is None:
-        flash('User {} not found.'.format(username))
+        flash(_('User %(username)s not found.', username=username))
         return redirect(url_for('index'))
     if user == current_user:
         flash('You cannot unfollow yourself!')
@@ -168,4 +176,7 @@ def reset_password(token):
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
 
-
+@app.route('/translate', methods=['POST'])
+@login_required
+def translate_text():
+    return jsonify({'text': 'traducido a es'})
